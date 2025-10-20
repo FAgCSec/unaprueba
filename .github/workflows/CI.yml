@@ -38,7 +38,7 @@ jobs:
           cache: 'npm'
 
       - name: 📦 Instalar dependencias
-        run: npm ci
+        run: npm install
 
       - name: ⏳ Esperar que MySQL esté listo
         run: |
