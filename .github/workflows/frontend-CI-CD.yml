@@ -2,7 +2,7 @@ name: CI/CD Frontend (React)
 
 on:
   push:
-    branches: [ "creacion-CI-CD" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
     paths:
