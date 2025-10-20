@@ -1,0 +1,11 @@
+# Imagen base de MySQL
+FROM mysql:8.0
+
+# Variables de entorno
+ENV MYSQL_ROOT_PASSWORD=root
+ENV MYSQL_DATABASE=bd_voluntariado
+ENV MYSQL_USER=voluntario_user
+ENV MYSQL_PASSWORD=voluntario_pass
+
+# Copiar script SQL inicial (opcional)
+COPY ./Bd/database.sql /docker-entrypoint-initdb.d/

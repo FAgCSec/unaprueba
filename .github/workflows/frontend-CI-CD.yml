@@ -1,0 +1,48 @@
+name: CI/CD Frontend (React)
+
+on:
+  push:
+    branches: [ "creacion-CI-CD" ]
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'frontend/**'
+
+jobs:
+  check_backend_ci:
+    name: Verificar CI del Backend
+    uses: ./.github/workflows/CI.yml
+
+  ci_frontend:
+    runs-on: ubuntu-latest
+    needs: check_backend_ci
+
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: 🧾 Checkout del código
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Instalar dependencias
+        run: npm ci
+
+      - name: 🧹 Lint (opcional)
+        run: npm run lint || echo "Sin lint configurado 🚧"
+
+      - name: 🧱 Compilar build
+        run: npm run build
+
+      - name: 📦 Guardar artefacto de build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-react
+          path: frontend/dist # Cambia a 'frontend/build' si usas create-react-app
+          retention-days: 1

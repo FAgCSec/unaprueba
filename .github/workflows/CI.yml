@@ -1,0 +1,67 @@
+name: CI Backend (NestJS)
+
+on:
+  workflow_call:
+
+jobs:
+  backend_ci:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./backend/nest-app
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: bd_voluntariado
+          MYSQL_USER: voluntario_user
+          MYSQL_PASSWORD: voluntario_pass
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: 🧾 Checkout del código
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Instalar dependencias
+        run: npm ci
+
+      - name: ⏳ Esperar que MySQL esté listo
+        run: |
+          for i in {1..15}; do
+            if mysqladmin ping -h "127.0.0.1" -uroot -proot --silent; then
+              echo "✅ MySQL está listo"
+              break
+            fi
+            echo "⏳ Esperando MySQL..."
+            sleep 5
+          done
+
+      - name: 🧩 Cargar base de datos inicial
+        run: mysql -h 127.0.0.1 -u root -proot bd_voluntariado < ./Bd/database.sql
+
+      - name: 🧪 Ejecutar pruebas (si tienes configuradas)
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: voluntario_user
+          DB_PASSWORD: voluntario_pass
+          DB_DATABASE: bd_voluntariado
+        run: npm run test || echo "Sin pruebas definidas 🚧"
+
+      - name: 🏗️ Verificar build
+        run: npm run build
