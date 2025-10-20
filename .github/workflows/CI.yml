@@ -36,9 +36,10 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          cache-dependency-path: './backend/nest-app/package-lock.json'
 
       - name: 📦 Instalar dependencias
-        run: npm install
+        run: npm ci
 
       - name: ⏳ Esperar que MySQL esté listo
         run: |
