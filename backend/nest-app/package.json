@@ -6,7 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build && xcopy src\\database\\colombia dist\\database\\colombia /E /I /Y",
+    "build": "nest build && npm run copy-files",
+    "copy-files": "node -e \"const fs = require('fs'); if (fs.existsSync('src/databases/colombia')) { fs.cpSync('src/databases/colombia', 'dist/databases/colombia', {recursive: true}); console.log('✅ Archivos copiados correctamente'); } else { console.log('⚠️  Directorio source no encontrado'); }\"",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "npm run build && node dist/main.js && nest start --watch ",
