@@ -28,34 +28,34 @@ jobs:
           --health-retries=5
 
     steps:
-      - name: 🧾 Checkout del código
+      - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: ⚙️ Configurar Node.js
+      - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: './backend/nest-app/package-lock.json'
 
-      - name: 📦 Instalar dependencias
+      - name: Instalar dependencias
         run: npm ci
 
-      - name: ⏳ Esperar que MySQL esté listo
+      - name: Esperar que MySQL esté listo
         run: |
           for i in {1..15}; do
             if mysqladmin ping -h "127.0.0.1" -uroot -proot --silent; then
-              echo "✅ MySQL está listo"
+              echo " MySQL está listo"
               break
             fi
-            echo "⏳ Esperando MySQL..."
+            echo "Esperando MySQL..."
             sleep 5
           done
 
-      - name: 🧩 Cargar base de datos inicial
+      - name: Cargar base de datos inicial
         run: mysql -h 127.0.0.1 -u root -proot bd_voluntariado < ./Bd/database.sql
 
-      - name: 🧪 Ejecutar pruebas (si tienes configuradas)
+      - name: Ejecutar pruebas (si tienes configuradas)
         env:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
@@ -64,5 +64,5 @@ jobs:
           DB_DATABASE: bd_voluntariado
         run: npm run test || echo "Sin pruebas definidas 🚧"
 
-      - name: 🏗️ Verificar build
+      - name: Verificar build
         run: npm run build
