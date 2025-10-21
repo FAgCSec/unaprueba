@@ -36,7 +36,7 @@ jobs:
         run: npm ci
 
       - name: Lint (opcional)
-        run: npm run lint || echo "Sin lint configurado 🚧"
+        run: npm run lint || echo "Sin lint configurado"
 
       - name: Compilar build
         run: npm run build || echo "Build con warnings, continuando..."
